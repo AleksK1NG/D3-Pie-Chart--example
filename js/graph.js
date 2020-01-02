@@ -84,7 +84,10 @@ const update = (data) => {
     .attrTween('d', arcTweenEnter)
 
   // add events
-  graph.selectAll('path').on('mouseover', handleMouseOver).on('mouseout', handleMouseOut)
+  graph.selectAll('path')
+    .on('mouseover', handleMouseOver)
+    .on('mouseout', handleMouseOut)
+    .on('click', handleClick)
 }
 
 // Get data from firebase firestore
@@ -162,6 +165,11 @@ const handleMouseOut = (data, index, elements) => {
     .transition('changeSliceFill')
     .duration(300)
     .attr('fill', colour(data.data.name))
+}
+
+const handleClick = (data, index, elements) => {
+  const id = data.data.id
+  db.collection('expenses').doc(id).delete()
 }
 
 // links:
