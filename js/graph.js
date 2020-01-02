@@ -152,14 +152,14 @@ function arcTweenUpdate(d) {
 // Even handlers
 const handleMouseOver = (data, index, elements) => {
   d3.select(elements[index])
-    .transition()
+    .transition('changeSliceFill')
     .duration(300)
     .attr('fill', 'white')
 }
 
 const handleMouseOut = (data, index, elements) => {
   d3.select(elements[index])
-    .transition()
+    .transition('changeSliceFill')
     .duration(300)
     .attr('fill', colour(data.data.name))
 }
