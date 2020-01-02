@@ -30,10 +30,22 @@ const arcPath = d3
 // const colour = d3.scaleOrdinal(d3['schemeSet3'])
 const colour = d3.scaleOrdinal(d3.schemeCategory10)
 
+// legend setup
+const legendGroup = svg.append('g').attr('transform', `translate(${dims.width + 40}, 10)`)
+
+const legend = d3
+  .legendColor()
+  .shape('circle')
+  .scale(colour)
+
 // Update data
 const update = (data) => {
   // update color scale domain
   colour.domain(data.map((d) => d.name))
+
+  // update legend
+  legendGroup.call(legend)
+
   // join enhanced (pie) data to path elements
   const paths = graph.selectAll('path').data(pie(data))
 
@@ -51,7 +63,7 @@ const update = (data) => {
   // handle the current DOM path updates, update with animation
   paths
     .transition()
-    .duration(750)
+    .duration(1000)
     .attrTween('d', arcTweenUpdate)
 
   paths
@@ -62,6 +74,9 @@ const update = (data) => {
     .attr('stroke', '#fff')
     // .attr('stroke-width', 3)
     .attr('fill', (d) => colour(d.data.name)) // here need d.data.name, its nested data.name field
+    .each(function(d) {
+      this._current = d
+    })
     .transition()
     .duration(1000)
     .attrTween('d', arcTweenEnter)
