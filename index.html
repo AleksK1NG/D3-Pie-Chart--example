@@ -49,6 +49,35 @@
       </div>
     </div>
 
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: 'AIzaSyAxNPdOKMj9nFrtLA3161ei57BK19bjQtA',
+        authDomain: 'd3-firebase-d3920.firebaseapp.com',
+        databaseURL: 'https://d3-firebase-d3920.firebaseio.com',
+        projectId: 'd3-firebase-d3920',
+        storageBucket: 'd3-firebase-d3920.appspot.com',
+        messagingSenderId: '1083008983801',
+        appId: '1:1083008983801:web:ece2c9da809f25264ff828',
+        measurementId: 'G-33DQZB4C97',
+      }
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig)
+      firebase.analytics()
+      const db = firebase.firestore()
+      // const settings = { timestampsInSnapshots: true }
+      // db.settings(settings)
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.min.js"
       integrity="sha256-m0QmIsBXcOMiETRmpT3qg2IQ/i0qazJA2miCHzOmS1Y="
