@@ -51,6 +51,9 @@ const update = (data) => {
     .attr('stroke', '#fff')
     .attr('stroke-width', 3)
     .attr('fill', (d) => colour(d.data.name)) // here need d.data.name, its nested data.name field
+    .transition()
+    .duration(1500)
+    .attrTween('d', arcTweenEnter)
 }
 
 // Get data from firebase firestore
@@ -80,3 +83,16 @@ db.collection('expenses')
     console.log(data)
     update(data)
   })
+
+// animate arc util
+const arcTweenEnter = (d) => {
+  let interpolate = d3.interpolate(d.endAngle, d.startAngle)
+
+  return (ticker) => {
+    d.startAngle = interpolate(ticker)
+    return arcPath(d)
+  }
+}
+
+// links:
+// https://www.d3indepth.com/shapes/#arc-generator
