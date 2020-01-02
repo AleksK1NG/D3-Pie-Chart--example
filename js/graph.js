@@ -30,6 +30,8 @@ const arcPath = d3
 // const colour = d3.scaleOrdinal(d3['schemeSet3'])
 const colour = d3.scaleOrdinal(d3.schemeCategory10)
 
+
+// Plugins
 // legend setup, names on the right of chart with color circles
 const legendGroup = svg.append('g').attr('transform', `translate(${dims.width + 40}, 10)`)
 
@@ -38,6 +40,17 @@ const legend = d3
   .shape('circle')
   .shapePadding(10)
   .scale(colour)
+
+const tip = d3
+  .tip()
+  .attr('class', 'tip card') // matialize css class
+  .html((d) => {
+    let content = `<div class="name">${d.data.name}</div>`
+    content += `<div class="cost">${d.data.cost}</div>`
+    content += `<div class="delete">Click to delete</div>`
+    return content
+  }) // html inside tooltip
+graph.call(tip)
 
 // Update data
 const update = (data) => {
@@ -84,9 +97,16 @@ const update = (data) => {
     .attrTween('d', arcTweenEnter)
 
   // add events
-  graph.selectAll('path')
-    .on('mouseover', handleMouseOver)
-    .on('mouseout', handleMouseOut)
+  graph
+    .selectAll('path')
+    .on('mouseover', (data, index, elements) => {
+      tip.show(data, elements[index]) // elements[index] is the same as this
+      handleMouseOver(data, index, elements)
+    })
+    .on('mouseout', (data, index, elements) => {
+      tip.hide()
+      handleMouseOut(data, index, elements)
+    })
     .on('click', handleClick)
 }
 
@@ -169,8 +189,11 @@ const handleMouseOut = (data, index, elements) => {
 
 const handleClick = (data, index, elements) => {
   const id = data.data.id
-  db.collection('expenses').doc(id).delete()
+  db.collection('expenses')
+    .doc(id)
+    .delete()
 }
 
 // links:
 // https://www.d3indepth.com/shapes/#arc-generator
+// plugins: d3 legends, d3 tip
