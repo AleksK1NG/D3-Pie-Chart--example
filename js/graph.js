@@ -46,7 +46,13 @@ const update = (data) => {
     .remove()
 
   // Update on update DOM
-  paths.attr('d', arcPath)
+  // paths.attr('d', arcPath) // Initial variant of update
+
+  // handle the current DOM path updates, update with animation
+  paths
+    .transition()
+    .duration(750)
+    .attrTween('d', arcTweenUpdate)
 
   paths
     .enter()
@@ -89,7 +95,7 @@ db.collection('expenses')
     update(data)
   })
 
-// animate arc util
+// animate arc util on enter
 const arcTweenEnter = (d) => {
   let interpolate = d3.interpolate(d.endAngle, d.startAngle)
 
@@ -99,13 +105,27 @@ const arcTweenEnter = (d) => {
   }
 }
 
-// animate arc util
+// animate arc util on exit
 const arcTweenEnd = (d) => {
   let interpolate = d3.interpolate(d.startAngle, d.endAngle)
 
   return (ticker) => {
     d.startAngle = interpolate(ticker)
     return arcPath(d)
+  }
+}
+
+// use function keyword to allow use of 'this'
+function arcTweenUpdate(d) {
+  console.log(this._current, d)
+  // interpolate between the two objects
+  const i = d3.interpolate(this._current, d)
+  // update the current prop with new updated data
+  this._current = i(1)
+
+  return function(t) {
+    // i(t) returns a value of d (data object) which we pass to arcPath
+    return arcPath(i(t))
   }
 }
 
