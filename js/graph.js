@@ -30,7 +30,6 @@ const arcPath = d3
 // const colour = d3.scaleOrdinal(d3['schemeSet3'])
 const colour = d3.scaleOrdinal(d3.schemeCategory10)
 
-
 // Plugins
 // legend setup, names on the right of chart with color circles
 const legendGroup = svg.append('g').attr('transform', `translate(${dims.width + 40}, 10)`)
