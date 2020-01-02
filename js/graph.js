@@ -21,6 +21,7 @@ const pie = d3
   .sort(null)
   .value((d) => d.cost) // the value we are evaluating to create the pie angles
 
+// need update arc path on every data update
 const arcPath = d3
   .arc()
   .outerRadius(dims.radius)
@@ -32,10 +33,15 @@ const colour = d3.scaleOrdinal(d3.schemeCategory10)
 // Update data
 const update = (data) => {
   // update color scale domain
-  colour.domain(data.map(d => d.name))
+  colour.domain(data.map((d) => d.name))
   // join enhanced (pie) data to path elements
   const paths = graph.selectAll('path').data(pie(data))
 
+  // update on remove from DOM
+  paths.exit().remove()
+
+  // Update on update DOM
+  paths.attr('d', arcPath)
 
   paths
     .enter()
@@ -44,7 +50,7 @@ const update = (data) => {
     .attr('d', arcPath)
     .attr('stroke', '#fff')
     .attr('stroke-width', 3)
-    .attr('fill', d => colour(d.data.name)) // here need d.data.name, its nested data.name field
+    .attr('fill', (d) => colour(d.data.name)) // here need d.data.name, its nested data.name field
 }
 
 // Get data from firebase firestore
