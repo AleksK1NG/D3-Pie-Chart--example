@@ -30,12 +30,13 @@ const arcPath = d3
 // const colour = d3.scaleOrdinal(d3['schemeSet3'])
 const colour = d3.scaleOrdinal(d3.schemeCategory10)
 
-// legend setup
+// legend setup, names on the right of chart with color circles
 const legendGroup = svg.append('g').attr('transform', `translate(${dims.width + 40}, 10)`)
 
 const legend = d3
   .legendColor()
   .shape('circle')
+  .shapePadding(10)
   .scale(colour)
 
 // Update data
@@ -45,6 +46,7 @@ const update = (data) => {
 
   // update legend
   legendGroup.call(legend)
+  legendGroup.selectAll('text').attr('fill', 'white')
 
   // join enhanced (pie) data to path elements
   const paths = graph.selectAll('path').data(pie(data))
@@ -80,6 +82,9 @@ const update = (data) => {
     .transition()
     .duration(1000)
     .attrTween('d', arcTweenEnter)
+
+  // add events
+  graph.selectAll('path').on('mouseover', handleMouseOver).on('mouseout', handleMouseOut)
 }
 
 // Get data from firebase firestore
@@ -142,6 +147,21 @@ function arcTweenUpdate(d) {
     // i(t) returns a value of d (data object) which we pass to arcPath
     return arcPath(i(t))
   }
+}
+
+// Even handlers
+const handleMouseOver = (data, index, elements) => {
+  d3.select(elements[index])
+    .transition()
+    .duration(300)
+    .attr('fill', 'white')
+}
+
+const handleMouseOut = (data, index, elements) => {
+  d3.select(elements[index])
+    .transition()
+    .duration(300)
+    .attr('fill', colour(data.data.name))
 }
 
 // links:
