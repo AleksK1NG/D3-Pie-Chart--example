@@ -18,6 +18,8 @@ form.addEventListener('submit', (e) => {
         error.textContent = ''
         name.value = ''
         cost.value = ''
+
+        console.log('response => ', res)
       })
   } else {
     error.textContent = 'Please enter values before submitting'
