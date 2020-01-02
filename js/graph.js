@@ -26,12 +26,16 @@ const arcPath = d3
   .outerRadius(dims.radius)
   .innerRadius(dims.radius / 2)
 
+// const colour = d3.scaleOrdinal(d3['schemeSet3'])
+const colour = d3.scaleOrdinal(d3.schemeCategory10)
+
 // Update data
 const update = (data) => {
+  // update color scale domain
+  colour.domain(data.map(d => d.name))
   // join enhanced (pie) data to path elements
   const paths = graph.selectAll('path').data(pie(data))
 
-  console.log(paths)
 
   paths
     .enter()
@@ -40,30 +44,33 @@ const update = (data) => {
     .attr('d', arcPath)
     .attr('stroke', '#fff')
     .attr('stroke-width', 3)
+    .attr('fill', d => colour(d.data.name)) // here need d.data.name, its nested data.name field
 }
 
 // Get data from firebase firestore
 let data = []
-db.collection('expenses').orderBy('cost').onSnapshot((res) => {
-  res.docChanges().forEach((change) => {
-    const doc = { ...change.doc.data(), id: change.doc.id }
+db.collection('expenses')
+  .orderBy('cost')
+  .onSnapshot((res) => {
+    res.docChanges().forEach((change) => {
+      const doc = { ...change.doc.data(), id: change.doc.id }
 
-    switch (change.type) {
-      case 'added':
-        data.push(doc)
-        break
-      case 'modified':
-        const index = data.findIndex((item) => item.id === doc.id)
-        data[index] = doc
-        break
-      case 'removed':
-        data = data.filter((item) => item.id !== doc.id)
-        break
+      switch (change.type) {
+        case 'added':
+          data.push(doc)
+          break
+        case 'modified':
+          const index = data.findIndex((item) => item.id === doc.id)
+          data[index] = doc
+          break
+        case 'removed':
+          data = data.filter((item) => item.id !== doc.id)
+          break
 
-      default:
-        break
-    }
+        default:
+          break
+      }
+    })
+    console.log(data)
+    update(data)
   })
-  console.log(data)
-  update(data)
-})
