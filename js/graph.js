@@ -38,7 +38,12 @@ const update = (data) => {
   const paths = graph.selectAll('path').data(pie(data))
 
   // update on remove from DOM
-  paths.exit().remove()
+  paths
+    .exit()
+    .transition()
+    .duration(1000)
+    .attrTween('d', arcTweenEnd)
+    .remove()
 
   // Update on update DOM
   paths.attr('d', arcPath)
@@ -49,10 +54,10 @@ const update = (data) => {
     .attr('class', 'arc')
     .attr('d', arcPath)
     .attr('stroke', '#fff')
-    .attr('stroke-width', 3)
+    // .attr('stroke-width', 3)
     .attr('fill', (d) => colour(d.data.name)) // here need d.data.name, its nested data.name field
     .transition()
-    .duration(1500)
+    .duration(1000)
     .attrTween('d', arcTweenEnter)
 }
 
@@ -87,6 +92,16 @@ db.collection('expenses')
 // animate arc util
 const arcTweenEnter = (d) => {
   let interpolate = d3.interpolate(d.endAngle, d.startAngle)
+
+  return (ticker) => {
+    d.startAngle = interpolate(ticker)
+    return arcPath(d)
+  }
+}
+
+// animate arc util
+const arcTweenEnd = (d) => {
+  let interpolate = d3.interpolate(d.startAngle, d.endAngle)
 
   return (ticker) => {
     d.startAngle = interpolate(ticker)
